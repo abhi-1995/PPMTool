@@ -1,6 +1,7 @@
 package com.fullstackbackend.ppmtool.web;
 
 import com.fullstackbackend.ppmtool.domain.Project;
+import com.fullstackbackend.ppmtool.services.MapValidationErrorService;
 import com.fullstackbackend.ppmtool.services.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,17 +23,15 @@ public class ProjectController {
     @Autowired
     private ProjectService projectService;
 
+    @Autowired
+    private MapValidationErrorService mapValidationErrorService;
+
     @PostMapping("")
     public ResponseEntity<?> createNewProject(@Valid @RequestBody Project project, BindingResult result){
-        if(result.hasErrors()){
-            Map<String,String> errorMap = new HashMap<>();
 
-            for(FieldError error: result.getFieldErrors()){
-                errorMap.put(error.getField(), error.getDefaultMessage());
-            }
+        ResponseEntity<?> errorMap = mapValidationErrorService.MapValidationService(result);
+        if(errorMap!=null) return errorMap;
 
-            return new ResponseEntity<>(errorMap, HttpStatus.BAD_REQUEST);
-        }
         Project project1 = projectService.saveOrUpdateProject(project);
         return new ResponseEntity<>(project, HttpStatus.CREATED);
     }
