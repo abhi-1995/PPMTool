@@ -25,6 +25,7 @@ class Dashboard extends Component {
               <hr />
               {projects.map( project => (
                 <ProjectItem key={project.id} project={project}/>
+                
               ))
                 
               }
