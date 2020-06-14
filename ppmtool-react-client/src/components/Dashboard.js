@@ -6,9 +6,7 @@ import { getProjects } from "../actions/projectActions";
 import PropTypes from "prop-types";
 
 class Dashboard extends Component {
-  constructor(){
-    super()
-  }
+  
   componentDidMount() {
     this.props.getProjects();
     
