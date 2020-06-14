@@ -6,15 +6,20 @@ import { getProjects } from "../actions/projectActions";
 import PropTypes from "prop-types";
 
 class Dashboard extends Component {
+  constructor(){
+    super()
+  }
   componentDidMount() {
     this.props.getProjects();
+    
   }
 
   render() {
-   const {projects} = this.props.project 
+   const {projects} = this.props.project
     return (
       <div className="projects">
         <div className="container">
+         
           <div className="row">
             <div className="col-md-12">
               <h1 className="display-4 text-center">Projects</h1>
