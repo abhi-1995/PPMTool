@@ -4,6 +4,7 @@ import com.fullstackbackend.ppmtool.domain.Project;
 import com.fullstackbackend.ppmtool.domain.ProjectTask;
 import com.fullstackbackend.ppmtool.services.MapValidationErrorService;
 import com.fullstackbackend.ppmtool.services.ProjectTaskService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,7 @@ public class BacklogController {
     @Autowired
     private MapValidationErrorService mapValidationErrorService;
 
+    @Operation(summary = "Add Project Task to BackLog")
     @PostMapping("/{backlog_id}")
     public ResponseEntity<?> addProjectTaskToBacklog(@Valid @RequestBody ProjectTask projectTask,
                                                      BindingResult result, @PathVariable String backlog_id){
@@ -35,17 +37,20 @@ public class BacklogController {
         return new ResponseEntity<>(pTask, HttpStatus.CREATED);
     }
 
+    @Operation(summary = "Get a Project Task by Backlog ID")
     @GetMapping("/{backlog_id}")
     public Iterable<ProjectTask> getProjectBacklog(@PathVariable String backlog_id){
         return projectTaskService.findBacklogById(backlog_id);
     }
 
+    @Operation(summary = "Get Project Task by Backlog ID and PT Sequence")
     @GetMapping("/{backlog_id}/{pt_id}")
     public ResponseEntity<?> getProjectTask(@PathVariable String backlog_id, @PathVariable String pt_id){
         ProjectTask projectTask = projectTaskService.findPTByProjectSequence(backlog_id,pt_id);
         return new ResponseEntity<>(projectTask,HttpStatus.OK);
     }
 
+    @Operation(summary = "Update the existing project task")
     @PatchMapping("/{backlog_id}/{pt_id}")
     public ResponseEntity<?> updateProjectTask(@Valid @RequestBody ProjectTask projectTask,
                                                BindingResult result, @PathVariable String backlog_id,
@@ -57,5 +62,12 @@ public class BacklogController {
         ProjectTask updatedTask = projectTaskService.updateByProjectSequence(projectTask,backlog_id,pt_id);
 
         return new ResponseEntity<>(updatedTask,HttpStatus.OK);
+    }
+
+    @Operation(summary = "Delete a project task by Backlog ID and Project task sequence ID")
+    @DeleteMapping("/{backlog_id}/{pt_id}")
+    public ResponseEntity<?> deleteProjectTask(@PathVariable String backlog_id, @PathVariable String pt_id){
+        projectTaskService.deletePTByProjectSequence(backlog_id,pt_id);
+        return new ResponseEntity<String>("Project Task '"+pt_id+"' was deleted successfully",HttpStatus.OK);
     }
 }
