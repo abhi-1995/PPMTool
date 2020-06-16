@@ -1,5 +1,6 @@
 package com.fullstackbackend.ppmtool.web;
 
+import com.fullstackbackend.ppmtool.domain.Project;
 import com.fullstackbackend.ppmtool.domain.ProjectTask;
 import com.fullstackbackend.ppmtool.services.MapValidationErrorService;
 import com.fullstackbackend.ppmtool.services.ProjectTaskService;
@@ -37,5 +38,11 @@ public class BacklogController {
     @GetMapping("/{backlog_id}")
     public Iterable<ProjectTask> getProjectBacklog(@PathVariable String backlog_id){
         return projectTaskService.findBacklogById(backlog_id);
+    }
+
+    @GetMapping("/{backlog_id}/{pt_id}")
+    public ResponseEntity<?> getProjectTask(@PathVariable String backlog_id, @PathVariable String pt_id){
+        ProjectTask projectTask = projectTaskService.findPTByProjectSequence(backlog_id,pt_id);
+        return new ResponseEntity<>(projectTask,HttpStatus.OK);
     }
 }
