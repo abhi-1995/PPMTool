@@ -3,6 +3,7 @@ package com.fullstackbackend.ppmtool.web;
 import com.fullstackbackend.ppmtool.domain.User;
 import com.fullstackbackend.ppmtool.services.MapValidationErrorService;
 import com.fullstackbackend.ppmtool.services.UserService;
+import com.fullstackbackend.ppmtool.validator.UserValidator;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,9 +26,13 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private UserValidator userValidator;
+
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody User user, BindingResult result){
         //Validate Password Match
+        userValidator.validate(user,result);
         ResponseEntity<?> errorMap = mapValidationErrorService.MapValidationService(result);
 
         if(errorMap!=null){
