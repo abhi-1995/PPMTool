@@ -2,9 +2,11 @@ package com.fullstackbackend.ppmtool.services;
 
 import com.fullstackbackend.ppmtool.domain.Backlog;
 import com.fullstackbackend.ppmtool.domain.Project;
+import com.fullstackbackend.ppmtool.domain.User;
 import com.fullstackbackend.ppmtool.exceptions.ProjectIdException;
 import com.fullstackbackend.ppmtool.repositories.BacklogRepository;
 import com.fullstackbackend.ppmtool.repositories.ProjectRepository;
+import com.fullstackbackend.ppmtool.repositories.UserReposiroty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,9 +19,17 @@ public class ProjectService {
     @Autowired
     private BacklogRepository backlogRepository;
 
-    public Project saveOrUpdateProject(Project project){
+    @Autowired
+    private UserReposiroty userReposiroty;
+
+    public Project saveOrUpdateProject(Project project,String username){
         try {
+
+            User user = userReposiroty.findByUsername(username);
+            project.setUser(user);
+            project.setProjectLeader(user.getUsername());
             project.setProjectIdentifier(project.getProjectIdentifier().toUpperCase());
+
             if(project.getId()==null){
                 Backlog backlog = new Backlog();
                 project.setBacklog(backlog);
