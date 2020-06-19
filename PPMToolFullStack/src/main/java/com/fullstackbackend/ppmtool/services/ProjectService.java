@@ -4,6 +4,7 @@ import com.fullstackbackend.ppmtool.domain.Backlog;
 import com.fullstackbackend.ppmtool.domain.Project;
 import com.fullstackbackend.ppmtool.domain.User;
 import com.fullstackbackend.ppmtool.exceptions.ProjectIdException;
+import com.fullstackbackend.ppmtool.exceptions.ProjectNotFoundException;
 import com.fullstackbackend.ppmtool.repositories.BacklogRepository;
 import com.fullstackbackend.ppmtool.repositories.ProjectRepository;
 import com.fullstackbackend.ppmtool.repositories.UserReposiroty;
@@ -48,23 +49,23 @@ public class ProjectService {
 
     }
 
-    public Project findProjectByIdentifier(String projectId){
+    public Project findProjectByIdentifier(String projectId, String username){
+        //Only want to return the project if the user looking for it is the owner
         Project project = projectRepository.findByProjectIdentifier(projectId);
         if(project == null){
             throw new ProjectIdException("Project ID: '"+projectId+"' does not exist");
         }
+        if(!project.getProjectLeader().equals(username)){
+            throw new ProjectNotFoundException("Project not found in your account");
+        }
         return project;
     }
 
-    public Iterable<Project> findAllProjects(){
-        return projectRepository.findAll();
+    public Iterable<Project> findAllProjects(String username){
+        return projectRepository.findAllByProjectLeader(username);
     }
 
-    public void deleteProjectByIdentifier(String projectId){
-        Project project = projectRepository.findByProjectIdentifier(projectId);
-        if(project == null){
-            throw new ProjectIdException("Cannot Delete Project with ID'"+projectId+"'. This project Doesn't exist.");
-        }
-        projectRepository.delete(project);
+    public void deleteProjectByIdentifier(String projectId, String username){
+        projectRepository.delete(findProjectByIdentifier(projectId,username));
     }
 }
