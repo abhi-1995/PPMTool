@@ -53,7 +53,7 @@ public class ProjectService {
                 project.setBacklog(backlogRepository.findByProjectIdentifier(project.getProjectIdentifier().toUpperCase()));
             }
 
-            return projectRepository.save(project);
+            return projectRepository.save(project);//insert into tables name (?,?,?,?)
         }catch (Exception e){
             throw new ProjectIdException("Project ID: '"+project.getProjectIdentifier().toUpperCase()+"' already exist");
         }
