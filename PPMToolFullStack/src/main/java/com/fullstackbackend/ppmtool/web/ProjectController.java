@@ -14,7 +14,7 @@ import javax.validation.Valid;
 import java.security.Principal;
 
 
-@RestController
+@RestController // = @Controller + @ResponseBody
 @RequestMapping("/api/project")
 @CrossOrigin
 public class ProjectController {
