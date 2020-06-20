@@ -58,6 +58,12 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody User user, BindingResult result){
         //Validate Password Match
+        if(user == null){
+            return new ResponseEntity<String>("User data needed",HttpStatus.BAD_REQUEST);
+        }
+        if(user.getPassword()==null){
+            return new ResponseEntity<String>("Password is needed",HttpStatus.BAD_REQUEST);
+        }
         userValidator.validate(user,result);
         ResponseEntity<?> errorMap = mapValidationErrorService.MapValidationService(result);
 
