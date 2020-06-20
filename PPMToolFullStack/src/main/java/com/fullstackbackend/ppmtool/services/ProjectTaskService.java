@@ -10,6 +10,7 @@ import com.fullstackbackend.ppmtool.repositories.ProjectTaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.util.List;
 
 @Service
@@ -71,12 +72,9 @@ public class ProjectTaskService {
         return projectTaskRepository.findByProjectIdentifierOrderByPriority(id);
     }
 
-    public ProjectTask findPTByProjectSequence(String backlog_id,String pt_id){
+    public ProjectTask findPTByProjectSequence(String backlog_id,String pt_id, String username){
         //make sure we are searching on the right backlog
-        Backlog backlog= backlogRepository.findByProjectIdentifier(backlog_id);
-        if(backlog==null){
-            throw new ProjectNotFoundException("Project with id: '"+backlog_id+"' does not exist");
-        }
+        projectService.findProjectByIdentifier(backlog_id,username);
         //make sure our task exists
         ProjectTask projectTask= projectTaskRepository.findByProjectSequence(pt_id);
         if(projectTask==null){
@@ -90,23 +88,16 @@ public class ProjectTaskService {
         return projectTask;
     }
 
-    public ProjectTask updateByProjectSequence(ProjectTask updatedTask,String backlog_id, String pt_id){
-        ProjectTask projectTask = findPTByProjectSequence(backlog_id,pt_id);
+    public ProjectTask updateByProjectSequence(ProjectTask updatedTask,String backlog_id, String pt_id, String username){
+        ProjectTask projectTask = findPTByProjectSequence(backlog_id,pt_id,username);
 
         projectTask = updatedTask;
 
         return projectTaskRepository.save(projectTask);
     }
 
-    public void deletePTByProjectSequence(String backlog_id, String pt_id){
-        ProjectTask projectTask = findPTByProjectSequence(backlog_id,pt_id);
-
-//        Backlog backlog = projectTask.getBacklog();
-//
-//        List<ProjectTask> pts = projectTask.getBacklog().getProjectTasks();
-//
-//        pts.remove(projectTask);
-//        backlogRepository.save(backlog);
+    public void deletePTByProjectSequence(String backlog_id, String pt_id, String username){
+        ProjectTask projectTask = findPTByProjectSequence(backlog_id,pt_id,username);
         projectTaskRepository.delete(projectTask);
     }
 }
