@@ -7,12 +7,11 @@ import { getBacklog } from "../../actions/backlogActions";
 
 class ProjectBoard extends Component {
   //constructor to handle errors
-  constructor(){
-      super();
-
-      this.state = {
-          errors: {}
-      };
+  constructor() {
+    super();
+    this.state = {
+      errors: {}
+    };
   }
 
   componentDidMount() {
@@ -20,42 +19,47 @@ class ProjectBoard extends Component {
     this.props.getBacklog(id);
   }
 
-  componentWillReceiveProps(nextProps){
-      if(nextProps.errors){
-          this.setState({errors: nextProps.errors});
-      }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.errors) {
+      this.setState({ errors: nextProps.errors });
+    }
   }
 
   render() {
     const { id } = this.props.match.params;
     const { project_tasks } = this.props.backlog;
-    const {errors} = this.state;
-    
+    const { errors } = this.state;
 
     let BoardContent;
 
-    const boardAlgorith = (errors,project_tasks) => {
-        if(project_tasks.length<1){
-            if(errors.projectNotFound){
-                return(
-                    <div className="alert alert-danger text-center" role="alert">
-                        {errors.projectNotFound}
-                    </div>
-                );
-            }else{
-                return(
-                    <div className="alert alert-info text-center" role="alert">
-                        No Project Tasks on this board
-                    </div>
-                );
-            }
+    const boardAlgorithm = (errors, project_tasks) => {
+      if (project_tasks.length < 1) {
+        //PROJECT IDENTIFIER BUG
+        if (errors.projectNotFound) {
+          return (
+            <div className="alert alert-danger text-center" role="alert">
+              {errors.projectNotFound}
+            </div>
+          );
+        } else if (errors.projectIdentifier) {
+          return (
+            <div className="alert alert-danger text-center" role="alert">
+              {errors.projectIdentifier}
+            </div>
+          );
         } else {
-            return <Backlog project_tasks_prop={project_tasks}/>;
+          return (
+            <div className="alert alert-info text-center" role="alert">
+              No Project Tasks on this board
+            </div>
+          );
         }
+      } else {
+        return <Backlog project_tasks_prop={project_tasks} />;
+      }
     };
 
-    BoardContent = boardAlgorith(errors, project_tasks);
-    
+    BoardContent = boardAlgorithm(errors, project_tasks);
 
     return (
       <div className="container">
